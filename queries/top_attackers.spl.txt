@@ -1,0 +1,5 @@
+index=main "FAILURE"
+| rex field=_raw "(?<ip>\d+\.\d+\.\d+\.\d+)"
+| stats count by ip
+| sort - count
+| head 10

@@ -1,0 +1,7 @@
+index=main
+| rex field=_raw "(?<status>SUCCESS|FAILURE)"
+| eval severity=case(
+    status="FAILURE","HIGH",
+    status="SUCCESS","INFO"
+)
+| stats count by severity

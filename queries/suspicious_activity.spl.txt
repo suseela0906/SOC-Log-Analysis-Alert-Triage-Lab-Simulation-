@@ -1,0 +1,4 @@
+index=main "FAILURE"
+| rex field=_raw "(?<ip>\d+\.\d+\.\d+\.\d+)"
+| stats count by ip
+| where count >= 2 AND count < 5

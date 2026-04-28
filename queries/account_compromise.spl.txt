@@ -1,0 +1,6 @@
+index=main ("FAILURE" OR "SUCCESS")
+| rex field=_raw "(?<ip>\d+\.\d+\.\d+\.\d+)"
+| stats count(eval(searchmatch("FAILURE"))) as fails
+        count(eval(searchmatch("SUCCESS"))) as success
+        by ip
+| where fails >= 3 AND success >= 1

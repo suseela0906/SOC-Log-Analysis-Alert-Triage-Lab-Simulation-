@@ -1,0 +1,19 @@
+index=main
+| rex field=_raw "(?<ip>\d+\.\d+\.\d+\.\d+)"
+| rex field=_raw "(?<status>SUCCESS|FAILURE)"
+| stats count(eval(status="FAILURE")) as failures
+        count(eval(status="SUCCESS")) as success
+        by ip
+| eval severity=case(
+    failures >= 5, "CRITICAL",
+    failures >= 3, "HIGH",
+    failures >= 2, "MEDIUM",
+    true(), "INFO"
+)
+| eval alert_type=case(
+    failures >= 5, "Brute Force",
+    failures >= 3 AND success >=1, "Account Compromise",
+    failures >= 2, "Suspicious Activity",
+    true(), "Normal"
+)
+| table ip failures success severity alert_type
